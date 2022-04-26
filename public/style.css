@@ -1,0 +1,13 @@
+body {
+    font-size: 16px;
+}
+#message, #file, #send-btn {
+    margin: 10px;
+}
+hr {
+    margin: 10px 0;
+}
+.common-style {
+    margin: 5px 10px;
+    font-size: 20px; font-weight: 900;
+}
