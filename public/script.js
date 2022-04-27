@@ -31,7 +31,7 @@ file.addEventListener('change', (e) => {
 
 document.getElementById('send-btn').addEventListener('click', () => {
     let message = document.getElementById('type-message').value;
-    if(message !== "" || image !== ""){
+    if(message !== "" && image !== ""){
         alert("成功送出")
         console.log('圖檔名稱', image);
         messageData.append('message', message);
@@ -41,12 +41,12 @@ document.getElementById('send-btn').addEventListener('click', () => {
             method:"POST",
             body: messageData
         }).then(res => res.json()).then(data => {
-                console.log(`${data.ok}`);
+                console.log('POST回應結果', data);
                 document.getElementById('type-message').value = "";
                 document.getElementById('select-file').value = "";
                 window.location.reload()
         }).catch( err => console.log('出錯了...', err) )
     }else{
-        alert("請輸入留言或圖片");
+        alert("請輸入留言與圖片");
     }
 })

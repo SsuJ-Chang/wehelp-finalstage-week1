@@ -22,17 +22,19 @@ def index():
 @app.route('/api/message', methods=['POST'])
 def save_message_data():
     message = request.form['message']
+    image = request.files['file'] # 接收檔案
     print('留言', message)
-    if(len(request.files) != 0):
-        image = request.files['file'] # 接收檔案
-        print('圖檔', image)
-        print('圖檔名稱', image.filename)
+    print('圖檔', image)
+    print('圖檔名稱', image.filename)
 
+    s3 = boto3.client('s3', 
+        aws_access_key_id=config('aws_access_key_id'),
+        aws_secret_access_key=config('aws_secret_access_key')
+    )
     try:
-        s3 = boto3.client('s3')
         s3.upload_fileobj(image, "rj728fun", image.filename)
     except:
-        return {"error": True, "message": "伺服器內部錯誤"}, 500
+        return {"error": True, "message": "S3伺服器內部錯誤"}, 500
 
     try:
         cnx = message_pool.get_connection()
@@ -40,7 +42,7 @@ def save_message_data():
         cursor.execute("INSERT INTO message (message, image) VALUES (%s, %s)", (message, "https://dw8zcfe69riyr.cloudfront.net/"+image.filename))
     except:
         cnx.rollback()
-        return {"error": True, "message": "伺服器內部錯誤"}, 500
+        return {"error": True, "message": "RDS伺服器內部錯誤"}, 500
     finally:
         cursor.close()
         cnx.commit()
